@@ -21,9 +21,8 @@ def webhook():
     if api == "weather":
         print ("CALL TO WEATHER API")
         res = weather(req)
-    elif api == "bus":
-        print ("CALL TO BUS API")
-        res = bus(req)
+      elif api == "forecast":
+        res = forecast(req)
     else:
         print("INVALID OR UNREGISTERED ACTION, PLEASE CHECK THE ACTION IN DIALOGFLOW")
     res = json.dumps(res, indent=4)
@@ -78,9 +77,10 @@ def forecast(req):
     sp=[]
     for i in range(4):    
         dt_txt=data['list'][i]['dt_txt']
+        if(dt_txt!=
         tp = data['list'][i]['main']['temp']
         msg = data['list'][i]['weather'][0]['description']
-        speech = "There is " + str(msg) + " today  and the temperature is "+str(tp)+" degree celcius in " + str(city)            
+        speech = "There will be " + str(msg) + " on "+ str(dt_txt) +" and the temperature is "+str(tp)+" degree celcius in " + str(city)            
         print("WORK COMPLETE")
         sp.append(speech)
     ans={ "fulfillmentText": sp, "source": "Weather" }  
