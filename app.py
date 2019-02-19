@@ -55,6 +55,37 @@ def weather(req):
     ans={ "fulfillmentText": speech, "source": "Weather" }
     return ans
 
+def forecast(req):
+    print ("STARTED PROCESSING: WORKING GOOD")
+    baseurl = "https://api.openweathermap.org/data/2.5/forecast?"
+    result = req.get("queryResult")
+    parameters = result.get("parameters")
+    city = parameters.get("geo-city")
+    if city is None:
+        print ("ERROR IN CITY, VERIFY IT TO BE 'geo-city'")
+        return None
+    print("REQUEST IS FOR " + str(city) + " CITY")
+    yql_url = baseurl + urlencode({'q': city}) + "&APPID=f5936c77dc85dc090132f79160f4008e&units=metric"
+    result = urlopen(yql_url).read()
+    data = json.loads(result)
+    #for some the line above gives an error and hence decoding to utf-8 might help
+    #data = json.loads(result.decode('utf-8'))
+    print("QUERY PROCESSED : RECEIVED DATA FROM WEATHER API")
+    tp = data.get('main').get('temp')
+    msg = data['weather'][0]['description']
+    speech = "There is " + str(msg) + " today  and the temperature is "+str(tp)+" degree celcius in " + str(city)
+    dt_txt=data.get('list').get('dt_txt')
+    sp=[]
+    for i in range(4):    
+        dt_txt=data['list'][i]['dt_txt']
+        tp = data['list'][i]['main']['temp']
+        msg = data['list'][i]['weather'][0]['description']
+        speech = "There is " + str(msg) + " today  and the temperature is "+str(tp)+" degree celcius in " + str(city)            
+        print("WORK COMPLETE")
+        sp.append(speech)
+    ans={ "fulfillmentText": sp, "source": "Weather" }  
+    return ans
+
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
